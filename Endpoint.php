@@ -57,6 +57,15 @@ class EndPoint extends API{
     protected function example(){
         return array("endPoint"=>$this->endpoint,"verb"=>$this->verb,"args"=>$this->args,"request"=>$this->request);
     }
+    protected function authenticate(){
+      return $this->_authenticate();
+    }
+    protected function verify(){
+      if(!$this->_verifyToken()){
+        throw new \Exception('Token Rejected');
+      }
+      return $this->headers['auth_token'];
+    }
     protected function movie(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){ //create
