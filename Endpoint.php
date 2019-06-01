@@ -1,7 +1,7 @@
 <?php
 
-require_once '/var/www/html/libs/api.php';
-require_once '/var/www/html/libs/LOE/factory.php';
+require_once __DIR__ . '/Api/Api.php';
+require_once __DIR__ . '/LOEServer/Factory.php';
 
 class EndPoint extends API{
 
