@@ -211,9 +211,28 @@ class EndPoint extends API{
             }catch(\Exception $e){
                 $data = 'Malformed Request';
             }
+        }elseif(strtolower($this->verb) == 'scan'){
+            $data = $this->_createScanner();
         }else{
             throw new \Exception('UnSupported Verb');
         }
         return $data;
+    }
+    private function _createScanner(){
+        if(!isset($this->args[1])){
+          $msgTo = null;
+          $authToken = null;
+        }else{
+          $msgTo = $this->args[1];
+          $authToken = $this->user->auth_token;
+        }
+        if(strtolower($this->args[0]) == 'db'){
+          $obj = \LOE\LoeFactory::createDbScanner($msgTo,$authToken);
+        }elseif(strtolower($this->args[0] == 'fs')){
+          $obj = \LOE\LoeFactory::createFsScanner($msgTo,$authToken);
+        }else{
+          throw new \Exception('Malformed Request');
+        }
+        return $obj->missing;
     }
 }
