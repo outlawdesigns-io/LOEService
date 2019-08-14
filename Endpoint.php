@@ -69,14 +69,14 @@ class EndPoint extends API{
     protected function movie(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){ //create
-            $processor = \LOE\LoeFactory::createProcessor('movies',$this->request);
+            $processor = \LOE\Factory::createProcessor('movies',$this->request);
             $data = $processor->movie;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){ //get all
             $data = \LOE\Movie::getAll();
         }elseif(!isset($this->verb) &&(int)$this->args[0] && $this->method == 'GET'){ //get a movie by id
-            $data = \LOE\LoeFactory::create('movies',$this->args[0]);
+            $data = \LOE\Factory::create('movies',$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){ //update by id
-            $data = \LOE\LoeFactory::create('movies',$this->args[0]);
+            $data = \LOE\Factory::create('movies',$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -88,14 +88,14 @@ class EndPoint extends API{
     protected function tv(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\LoeFactory::createProcessor('tv',$this->request);
+            $processor = \LOE\Factory::createProcessor('tv',$this->request);
             $data = $processor->episode;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Episode::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\LoeFactory::create('tv',$this->args[0]);
+            $data = \LOE\Factory::create('tv',$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\LoeFactory::create('tv',$this->args[0]);
+            $data = \LOE\Factory::create('tv',$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -107,14 +107,14 @@ class EndPoint extends API{
     protected function music(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\LoeFactory::createProcessor('music',$this->request);
+            $processor = \LOE\Factory::createProcessor('music',$this->request);
             $data = $processor->song;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Song::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\LoeFactory::create('music',$this->args[0]);
+            $data = \LOE\Factory::create('music',$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\LoeFactory::create('music',$this->args[0]);
+            $data = \LOE\Factory::create('music',$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -126,14 +126,14 @@ class EndPoint extends API{
     protected function doc(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\LoeFactory::createProcessor('docs',$this->request);
+            $processor = \LOE\Factory::createProcessor('docs',$this->request);
             $data = $processor->doc;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Doc::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\LoeFactory::create('docs',$this->args[0]);
+            $data = \LOE\Factory::create('docs',$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\LoeFactory::create('docs',$this->args[0]);
+            $data = \LOE\Factory::create('docs',$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -145,14 +145,14 @@ class EndPoint extends API{
     protected function anime(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\LoeFactory::createProcessor('anime',$this->request);
+            $processor = \LOE\Factory::createProcessor('anime',$this->request);
             $data = $processor->doc;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Anime::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\LoeFactory::create('anime',$this->args[0]);
+            $data = \LOE\Factory::create('anime',$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\LoeFactory::create('anime',$this->args[0]);
+            $data = \LOE\Factory::create('anime',$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -195,19 +195,19 @@ class EndPoint extends API{
         }
         if(strtolower($this->verb) == 'search'){
             try{
-                $data = \LOE\LoeFactory::search($key,$this->args[0],$this->args[1]);
+                $data = \LOE\Factory::search($key,$this->args[0],$this->args[1]);
             }catch(\Exception $e){
                 $data = 'Malformed Search';
             }
         }elseif(strtolower($this->verb) == 'browse'){
             try{
-                $data = \LOE\LoeFactory::browse($key,$this->args[0]);
+                $data = \LOE\Factory::browse($key,$this->args[0]);
             }catch(Exception $e){
                 $data = 'Malformed Request';
             }
         }elseif(strtolower($this->verb) == 'recent'){
             try{
-                $data = \LOE\LoeFactory::recent($key,$this->args[0]);
+                $data = \LOE\Factory::recent($key,$this->args[0]);
             }catch(\Exception $e){
                 $data = 'Malformed Request';
             }
@@ -227,9 +227,9 @@ class EndPoint extends API{
           $authToken = $this->user->auth_token;
         }
         if(strtolower($this->args[0]) == 'db'){
-          $obj = \LOE\LoeFactory::createDbScanner($key,$msgTo,$authToken);
+          $obj = \LOE\Factory::createDbScanner($key,$msgTo,$authToken);
         }elseif(strtolower($this->args[0] == 'fs')){
-          $obj = \LOE\LoeFactory::createFsScanner($key,$msgTo,$authToken);
+          $obj = \LOE\Factory::createFsScanner($key,$msgTo,$authToken);
         }else{
           throw new \Exception('Malformed Request');
         }
