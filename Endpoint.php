@@ -213,6 +213,10 @@ class EndPoint extends API{
             }
         }elseif(strtolower($this->verb) == 'scan'){
             $data = $this->_createScanner($key);
+        }elseif(strtolower($this->verb) == 'count'){
+            $data = \LOE\Factory::count($key);
+        }elseif(strtolower($this->verb) == 'group'){
+            $data = \LOE\Factory::countOf($key,$this->args[0]);
         }else{
             throw new \Exception('UnSupported Verb');
         }
