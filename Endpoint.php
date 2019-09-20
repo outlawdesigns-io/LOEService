@@ -72,7 +72,7 @@ class EndPoint extends API{
             $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->movie;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){ //get all
-            $data = \LOE\Movie::getAll();
+            $data = \LOE\Movie\Movie::getAll();
         }elseif(!isset($this->verb) &&(int)$this->args[0] && $this->method == 'GET'){ //get a movie by id
             $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){ //update by id
@@ -91,7 +91,7 @@ class EndPoint extends API{
             $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->episode;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
-            $data = \LOE\Episode::getAll();
+            $data = \LOE\Tv\Episode::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
             $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
@@ -110,7 +110,7 @@ class EndPoint extends API{
             $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->song;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
-            $data = \LOE\Song::getAll();
+            $data = \LOE\Music\Song::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
             $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
@@ -129,7 +129,7 @@ class EndPoint extends API{
             $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->doc;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
-            $data = \LOE\Doc::getAll();
+            $data = \LOE\Doc\Doc::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
             $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
@@ -148,7 +148,7 @@ class EndPoint extends API{
             $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->doc;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
-            $data = \LOE\Anime::getAll();
+            $data = \LOE\Anime\Anime::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
             $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
