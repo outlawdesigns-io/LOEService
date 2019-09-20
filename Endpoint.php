@@ -69,14 +69,14 @@ class EndPoint extends API{
     protected function movie(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){ //create
-            $processor = \LOE\Factory::createProcessor('movies',$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->movie;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){ //get all
             $data = \LOE\Movie::getAll();
         }elseif(!isset($this->verb) &&(int)$this->args[0] && $this->method == 'GET'){ //get a movie by id
-            $data = \LOE\Factory::create('movies',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){ //update by id
-            $data = \LOE\Factory::create('movies',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -85,17 +85,17 @@ class EndPoint extends API{
         }
         return $data;
     }
-    protected function tv(){
+    protected function episode(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\Factory::createProcessor('tv',$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->episode;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Episode::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\Factory::create('tv',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\Factory::create('tv',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -104,17 +104,17 @@ class EndPoint extends API{
         }
         return $data;
     }
-    protected function music(){
+    protected function song(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\Factory::createProcessor('music',$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->song;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Song::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\Factory::create('music',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\Factory::create('music',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -126,14 +126,14 @@ class EndPoint extends API{
     protected function doc(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\Factory::createProcessor('docs',$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->doc;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Doc::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\Factory::create('docs',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\Factory::create('docs',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -145,14 +145,14 @@ class EndPoint extends API{
     protected function anime(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\Factory::createProcessor('anime',$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
             $data = $processor->doc;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Anime::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\Factory::create('anime',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\Factory::create('anime',$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -165,15 +165,15 @@ class EndPoint extends API{
         $data = null;
         switch($this->verb){
             case 'movies':
-                $scanner = new \LOE\MovieScanner();
+                $scanner = \LOE\Factory::createHoldingBayScanner('movie');
                 $data = $scanner->movies;
                 break;
             case 'tv':
-                $scanner = new \LOE\TvScanner();
+                $scanner = \LOE\Factory::createHoldingBayScanner('episode');
                 $data = $scanner->shows;
                 break;
             case 'music':
-                $scanner = new \LOE\MusicScanner();
+                $scanner = \LOE\Factory::createHoldingBayScanner('song');
                 $data = $scanner->artists;
                 break;
             case 'anime':
@@ -187,12 +187,7 @@ class EndPoint extends API{
     }
     private function _parseVerb(){
         $data = null;
-        $key = $this->endpoint;
-        if($key == 'movie'){
-            $key = 'movies';
-        }elseif($key == 'doc'){
-            $key = 'docs';
-        }
+        $key = ucwords($this->endPoint);
         if(strtolower($this->verb) == 'search'){
             try{
                 $data = \LOE\Factory::search($key,$this->args[0],$this->args[1]);
