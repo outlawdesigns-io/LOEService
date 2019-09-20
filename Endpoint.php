@@ -69,14 +69,14 @@ class EndPoint extends API{
     protected function movie(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){ //create
-            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endpoint,$this->request);
             $data = $processor->movie;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){ //get all
             $data = \LOE\Movie\Movie::getAll();
         }elseif(!isset($this->verb) &&(int)$this->args[0] && $this->method == 'GET'){ //get a movie by id
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){ //update by id
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -88,14 +88,14 @@ class EndPoint extends API{
     protected function episode(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endpoint,$this->request);
             $data = $processor->episode;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Tv\Episode::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -107,14 +107,14 @@ class EndPoint extends API{
     protected function song(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endpoint,$this->request);
             $data = $processor->song;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Music\Song::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -126,14 +126,14 @@ class EndPoint extends API{
     protected function doc(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endpoint,$this->request);
             $data = $processor->doc;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Doc\Doc::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -145,14 +145,14 @@ class EndPoint extends API{
     protected function anime(){
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-            $processor = \LOE\Factory::createHoldingBayProcessor($this->endPoint,$this->request);
+            $processor = \LOE\Factory::createHoldingBayProcessor($this->endpoint,$this->request);
             $data = $processor->doc;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Anime\Anime::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
-            $data = \LOE\Factory::createModel($this->endPoint,$this->args[0]);
+            $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
             $data->setFields($this->request)->update();
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
@@ -187,7 +187,7 @@ class EndPoint extends API{
     }
     private function _parseVerb(){
         $data = null;
-        $key = ucwords($this->endPoint);
+        $key = ucwords($this->endpoint);
         if(strtolower($this->verb) == 'search'){
             try{
                 $data = \LOE\Factory::search($key,$this->args[0],$this->args[1]);
