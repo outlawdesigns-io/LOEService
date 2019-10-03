@@ -175,6 +175,7 @@ class EndPoint extends API{
             case 'music':
                 $scanner = \LOE\Factory::createHoldingBayScanner('song');
                 $data = $scanner->artists;
+                $data['images'] = $scanner->possibleCovers;
                 break;
             case 'anime':
                 break;
