@@ -9,10 +9,12 @@ class EndPoint extends API{
     const GETERR = 'Can only GET this endpoint';
     const POSTERR = 'Can only POST this endpoint';
     const REQERR = 'Malformed Request.';
+    protected $user;
     protected static $_authErrors = array(
       "headers"=>"Missing required headers.",
       "noToken"=>"Access Denied. No Token Present.",
-      "badToken"=>"Access Denied. Invalid Token"
+      "badToken"=>"Access Denied. Invalid Token.",
+      "badMethod"=>"Unsupported Request Method"
     );
 
     public function __construct($request,$origin)
@@ -81,7 +83,7 @@ class EndPoint extends API{
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
         }else{
-            throw new \Exception('Malformed Request');
+            throw new \Exception(self::REQERR);
         }
         return $data;
     }
@@ -100,7 +102,7 @@ class EndPoint extends API{
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
         }else{
-            throw new \Exception('Malformed Request');
+            throw new \Exception(self::REQERR);
         }
         return $data;
     }
@@ -119,7 +121,7 @@ class EndPoint extends API{
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
         }else{
-            throw new \Exception('Malformed Request');
+            throw new \Exception(self::REQERR);
         }
         return $data;
     }
@@ -138,7 +140,7 @@ class EndPoint extends API{
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
         }else{
-            throw new \Exception('Malformed Request');
+            throw new \Exception(self::REQERR);
         }
         return $data;
     }
@@ -157,7 +159,7 @@ class EndPoint extends API{
         }elseif(isset($this->verb)){
             $data = $this->_parseVerb();
         }else{
-            throw new \Exception('Malformed Request');
+            throw new \Exception(self::REQERR);
         }
         return $data;
     }
@@ -182,43 +184,35 @@ class EndPoint extends API{
             case 'docs':
                 break;
             default:
-                throw new \Exception('Malformed Request');
+                throw new \Exception(self::REQERR);
         }
         return $data;
     }
     private function _parseVerb(){
         $data = null;
-        $key = ucwords($this->endpoint);
         if(strtolower($this->verb) == 'search'){
-            try{
-                $data = \LOE\Factory::search($key,$this->args[0],$this->args[1]);
-            }catch(\Exception $e){
-                $data = 'Malformed Search';
-            }
+           $data = \LOE\Factory::search($key,$this->args[0],$this->args[1]);
         }elseif(strtolower($this->verb) == 'browse'){
-            try{
-                $data = \LOE\Factory::browse($key,$this->args[0]);
-            }catch(Exception $e){
-                $data = 'Malformed Request';
-            }
+           $data = \LOE\Factory::browse($key,$this->args[0]);
         }elseif(strtolower($this->verb) == 'recent'){
-            try{
-                $data = \LOE\Factory::recent($key,$this->args[0]);
-            }catch(\Exception $e){
-                $data = 'Malformed Request';
-            }
+            $data = \LOE\Factory::recent($key,$this->args[0]);
         }elseif(strtolower($this->verb) == 'scan'){
-            $data = $this->_createScanner($key);
+            $data = $this->_createScanner();
         }elseif(strtolower($this->verb) == 'count'){
             $data = \LOE\Factory::count($key);
         }elseif(strtolower($this->verb) == 'group'){
             $data = \LOE\Factory::countOf($key,$this->args[0]);
+        }elseif(strtolower($this->verb) == 'rate'){
+            $data = _parseRating();
+        }elseif(strtolower($this->verb) == 'list'){
+            $data = _parsePlayList();
         }else{
             throw new \Exception('UnSupported Verb');
         }
         return $data;
     }
-    private function _createScanner($key){
+    private function _createScanner(){
+        $key = ucwords($this->endpoint);
         if(!isset($this->args[1])){
           $msgTo = null;
           $authToken = null;
@@ -231,8 +225,80 @@ class EndPoint extends API{
         }elseif(strtolower($this->args[0] == 'fs')){
           $obj = \LOE\Factory::createFsScanner($key,$msgTo,$authToken);
         }else{
-          throw new \Exception('Malformed Request');
+          throw new \Exception(self::REQERR);
         }
         return $obj->missing;
+    }
+    private function _parseRating(){
+      $data = null;
+      switch($this->method){
+        case 'GET':
+          $this->_getRating();
+        break;
+        case 'POST':
+          $this->_createRating();
+        break;
+        default:
+          throw new \Exception(self::$_authErrors['badMethod']);
+      }
+    }
+    private function _createRating(){
+      $key = ucwords($this->endpoint);
+      $obj = \LOE\Factory::createModel($key . 'Rating');
+      $idKey = strtolower($this->endpoint) . 'Id';
+      $obj->$idKey = $this->args[0];
+      $obj->userId = $this->user->UID;
+      $obj->setFields($this->request)->create();
+      return $obj;
+    }
+    private function _getRating(){
+      $data = null;
+      $objName = ucwords($this->endpoint) . 'Rating';
+      if(!isset($this->args[0])){
+        $data = $objName::getAll($this->user->UID);
+      }else{
+        $data = \LOE\Factory::createModel($objName,$this->args[0]);
+      }
+      return $data;
+    }
+    private function _parsePlayList(){
+      $data = null;
+      switch($this->method){
+        case 'GET':
+          $data = $this->_getPlayList();
+        break;
+        case 'PUT':
+          $data = $this->_updatePlayList();
+        break;
+        case 'POST':
+          $data = $this->_savePlayList();
+        break;
+        default:
+          throw new \Exception(self::$_authErrors['badMethod']);
+      }
+      return $data;
+    }
+    private function _savePlayList(){
+      $key = ucwords($this->endpoint);
+      $obj = \LOE\Factory::createModel($key . 'PlayList');
+      $obj->UserId = $this->user->UID;
+      $obj->setFields($this->request)->create();
+      return $obj;
+    }
+    private function _updatePlayList(){
+      $key = ucwords($this->endpoint);
+      $obj = \LOE\Factory::createModel($key . 'PlayList');
+      $obj->setFields($this->request)->update();
+      return $obj;
+    }
+    private function _getPlayList(){
+      $data = null;
+      $objName = ucwords($this->endpoint) . 'PlayList';
+      if(!isset($this->args[0])){
+        $data = $objName::getAll($this->user->UID);
+      }else{
+        $data = \LOE\Factory::createModel($objName,$this->args[0]);
+      }
+      return $data;
     }
 }
