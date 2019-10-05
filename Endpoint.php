@@ -190,18 +190,19 @@ class EndPoint extends API{
     }
     private function _parseVerb(){
         $data = null;
+        $key = ucwords($this->endpoint);
         if(strtolower($this->verb) == 'search'){
-           $data = \LOE\Factory::search($this->endpoint,$this->args[0],$this->args[1]);
+           $data = \LOE\Factory::search($key,$this->args[0],$this->args[1]);
         }elseif(strtolower($this->verb) == 'browse'){
-           $data = \LOE\Factory::browse($this->endpoint,$this->args[0]);
+           $data = \LOE\Factory::browse($key,$this->args[0]);
         }elseif(strtolower($this->verb) == 'recent'){
-            $data = \LOE\Factory::recent($this->endpoint,$this->args[0]);
+            $data = \LOE\Factory::recent($key,$this->args[0]);
         }elseif(strtolower($this->verb) == 'scan'){
             $data = $this->_createScanner();
         }elseif(strtolower($this->verb) == 'count'){
-            $data = \LOE\Factory::count($this->endpoint);
+            $data = \LOE\Factory::count($key);
         }elseif(strtolower($this->verb) == 'group'){
-            $data = \LOE\Factory::countOf($this->endpoint,$this->args[0]);
+            $data = \LOE\Factory::countOf($key,$this->args[0]);
         }elseif(strtolower($this->verb) == 'rate'){
             $data = _parseRating();
         }elseif(strtolower($this->verb) == 'list'){
