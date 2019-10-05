@@ -204,9 +204,9 @@ class EndPoint extends API{
         }elseif(strtolower($this->verb) == 'group'){
             $data = \LOE\Factory::countOf($key,$this->args[0]);
         }elseif(strtolower($this->verb) == 'rate'){
-            $data = _parseRating();
+            $data = $this->_parseRating();
         }elseif(strtolower($this->verb) == 'list'){
-            $data = _parsePlayList();
+            $data = $this->_parsePlayList();
         }else{
             throw new \Exception('UnSupported Verb');
         }
