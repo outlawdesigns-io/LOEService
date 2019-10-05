@@ -234,14 +234,15 @@ class EndPoint extends API{
       $data = null;
       switch($this->method){
         case 'GET':
-          $this->_getRating();
+          $data = $this->_getRating();
         break;
         case 'POST':
-          $this->_createRating();
+          $data = $this->_createRating();
         break;
         default:
           throw new \Exception(self::$_authErrors['badMethod']);
       }
+      return $data;
     }
     private function _createRating(){
       $key = ucwords($this->endpoint);
