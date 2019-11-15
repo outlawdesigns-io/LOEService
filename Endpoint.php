@@ -207,6 +207,8 @@ class EndPoint extends API{
             $data = $this->_parseRating();
         }elseif(strtolower($this->verb) == 'list'){
             $data = $this->_parsePlayList();
+        }elseif(strtolower($this->verb) == 'random'){
+            $data = $this->_getRandomList();
         }else{
             throw new \Exception('UnSupported Verb');
         }
@@ -302,5 +304,11 @@ class EndPoint extends API{
         $data = \LOE\Factory::createModel($objName,$this->args[0]);
       }
       return $data;
+    }
+    private function _getRandomList(){
+      $key = ucwords($this->endpoint);
+      $subKey = strtolower($key) . 's';
+      $obj = \LOE\Factory::createRandomPlayList($key,$this->args[0],$this->args[1]);
+      return $obj->$subKey;
     }
 }
