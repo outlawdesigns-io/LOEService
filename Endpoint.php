@@ -6,6 +6,7 @@ require_once __DIR__ . '/LOEServer/Factory.php';
 class EndPoint extends API{
 
     const ACCOUNTS = 'http://api.outlawdesigns.io:9661/';
+    const RANDWORDS = 'http://api.outlawdesigns.io:9600/';
     const GETERR = 'Can only GET this endpoint';
     const POSTERR = 'Can only POST this endpoint';
     const REQERR = 'Malformed Request.';
@@ -286,6 +287,9 @@ class EndPoint extends API{
       $key = ucwords($this->endpoint);
       $obj = \LOE\Factory::createModel($key . 'PlayList');
       $obj->UserId = $this->user->UID;
+      if(empty($this->request->Label) || is_null($this->request->Label) || !isset($this->request->Label)){
+        $this->request->Label = $this->_getRandomWord() . "_" . $this->_getRandomWord();
+      }
       $obj->setFields($this->request)->create();
       return $obj;
     }
@@ -310,5 +314,8 @@ class EndPoint extends API{
       $subKey = strtolower($key) . 's';
       $obj = \LOE\Factory::createRandomPlayList($key,$this->args[0],$this->args[1]);
       return $obj->$subKey;
+    }
+    private function _getRandomWord(){
+      return file_get_contents(self::RANDWORDS);
     }
 }
