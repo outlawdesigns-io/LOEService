@@ -164,6 +164,21 @@ class EndPoint extends API{
         }
         return $data;
     }
+    protected function playedsong(){
+      $data = null;
+      if($this->method != 'GET'){
+        throw new \Exception(self::$_authErrors['badMethod']);
+      }elseif(!isset($this->verb) && !isset($this->args[0])){
+        $data = \LOE\Music\Played::getAll();
+      }elseif(!isset($this->verb) && (int)$this->args[0]){
+        $data = \LOE\Factory::createModel(ucwords($this->endpoint),$this->args[0]);
+      }elseif(isset($this->verb)){
+        $data = $this->_parseVerb();
+      }else{
+        throw new \Exception(self::REQERR);
+      }
+      return $data;
+    }
     protected function holdingbay(){
         $data = null;
         switch($this->verb){
