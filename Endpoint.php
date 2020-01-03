@@ -1,12 +1,12 @@
 <?php
 
-require_once __DIR__ . '/Api/Api.php';
-require_once __DIR__ . '/LOEServer/Factory.php';
+require_once __DIR__ . '/Libs/Api/Api.php';
+require_once __DIR__ . '/Libs/LOEServer/Factory.php';
 
 class EndPoint extends API{
 
-    const ACCOUNTS = 'http://api.outlawdesigns.io:9661/';
-    const RANDWORDS = 'http://api.outlawdesigns.io:9600/';
+    const ACCOUNTS = 'https://api.outlawdesigns.io:9661/';
+    const RANDWORDS = 'https://api.outlawdesigns.io:9600/';
     const GETERR = 'Can only GET this endpoint';
     const POSTERR = 'Can only POST this endpoint';
     const REQERR = 'Malformed Request.';
