@@ -183,16 +183,16 @@ class EndPoint extends API{
         $data = null;
         switch($this->verb){
             case 'movies':
-                $scanner = \LOE\Factory::createHoldingBayScanner('movie');
+                $scanner = \LOE\Factory::createHoldingBayScanner(\LOE\Factory::getModel('Movie'));
                 $data = $scanner->movies;
                 break;
             case 'tv':
-                $scanner = \LOE\Factory::createHoldingBayScanner('episode');
+                $scanner = \LOE\Factory::createHoldingBayScanner(\LOE\Factory::getModel('Episode'));
                 $data = $scanner->shows;
                 break;
             case 'music':
                 \LOE\Factory::createHoldingBayCleaner('song');
-                $scanner = \LOE\Factory::createHoldingBayScanner('song');
+                $scanner = \LOE\Factory::createHoldingBayScanner(\LOE\Factory::getModel('Song'));
                 $data = $scanner->artists;
                 $data['images'] = $scanner->possibleCovers;
                 break;
