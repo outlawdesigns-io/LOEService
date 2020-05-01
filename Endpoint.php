@@ -164,6 +164,19 @@ class EndPoint extends API{
         }
         return $data;
     }
+    protected function share(){
+      $data = null;
+      if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
+        $data = \LOE\Factory::buildShare($userId,$modelId,$objectId);
+        $data->create();
+      }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
+        $data = \LOE\Share::getAll();
+      }elseif(isset($this->verb)){
+        $secret = \LOE\Share::getSecret($this->verb);
+        $data = \LOE\Share::decodeToken($this->verb,$secret);
+      }
+      return $data;
+    }
     protected function playedsong(){
       $data = null;
       if($this->method != 'GET'){
