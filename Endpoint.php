@@ -167,7 +167,7 @@ class EndPoint extends API{
     protected function share(){
       $data = null;
       if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-        $data = \LOE\Factory::buildShare($userId,$modelId,$objectId);
+        $data = \LOE\Factory::buildShare($request->userId,$request->modelId,$request->objectId);
         $data->create();
       }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
         $data = \LOE\Share::getAll();
