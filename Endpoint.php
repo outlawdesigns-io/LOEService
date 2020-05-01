@@ -11,6 +11,9 @@ class EndPoint extends API{
     const POSTERR = 'Can only POST this endpoint';
     const REQERR = 'Malformed Request.';
     protected $user;
+    protected static $_publicEndPoints = array(
+      "share"
+    );
     protected static $_authErrors = array(
       "headers"=>"Missing required headers.",
       "noToken"=>"Access Denied. No Token Present.",
@@ -21,13 +24,19 @@ class EndPoint extends API{
     public function __construct($request,$origin)
     {
         parent::__construct($request);
-        if(isset($this->headers['request_token']) && ! isset($this->headers['password'])){
-          throw new \Exception(self::$_authErrors['headers']);
-        }elseif(!isset($this->headers['auth_token']) && !isset($this->headers['request_token'])){
-          throw new \Exception(self::$_authErrors['noToken']);
-        }elseif(!$this->_verifyToken() && !isset($this->headers['request_token'])){
-          throw new \Exception(self::$_authErrors['badToken']);
-        }
+        $this->_verifyHeaders();
+    }
+    private function _verifyHeaders(){
+      if(in_array($this->endPoint,self::$_publicEndPoints) && isset($this->headers['auth_token']) && !$this->_verifyToken()){
+        throw new \Exception(self::$_authErrors['badToken']);
+      }elseif(!in_array($this->endpoint,self::$_publicEndPoints) && isset($this->headers['request_token']) && ! isset($this->headers['password'])){
+        throw new \Exception(self::$_authErrors['headers']);
+      }elseif(!in_array($this->endpoint,self::$_publicEndPoints) && !isset($this->headers['auth_token']) && !isset($this->headers['request_token'])){
+        throw new \Exception(self::$_authErrors['noToken']);
+      }elseif(!in_array($this->endpoint,self::$_publicEndPoints) && !$this->_verifyToken() && !isset($this->headers['request_token'])){
+        throw new \Exception(self::$_authErrors['badToken']);
+      }
+      return $this;
     }
     private function _verifyToken(){
       $ch = curl_init();
@@ -167,7 +176,7 @@ class EndPoint extends API{
     protected function share(){
       $data = null;
       if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-        $data = \LOE\Factory::createShare($this->request->userId,$this->request->modelId,$this->request->objectId);
+        $data = \LOE\Factory::createShare($this->user->UID,$this->request->modelId,$this->request->objectId);
         $data->create();
       }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
         $data = \LOE\Share::getAll();
