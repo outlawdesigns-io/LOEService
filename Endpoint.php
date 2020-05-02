@@ -27,13 +27,11 @@ class EndPoint extends API{
         $this->_verifyHeaders();
     }
     private function _verifyHeaders(){
-      if(in_array($this->endPoint,self::$_publicEndPoints) && isset($this->headers['auth_token']) && !$this->_verifyToken()){
-        throw new \Exception(self::$_authErrors['badToken']);
-      }elseif(!in_array($this->endpoint,self::$_publicEndPoints) && isset($this->headers['request_token']) && ! isset($this->headers['password'])){
+      if(isset($this->headers['request_token']) && !isset($this->headers['password'])){
         throw new \Exception(self::$_authErrors['headers']);
-      }elseif(!in_array($this->endpoint,self::$_publicEndPoints) && !isset($this->headers['auth_token']) && !isset($this->headers['request_token'])){
+      }elseif(!isset($this->headers['request_token']) && !isset($this->headers['auth_token']) && !in_array($this->endpoint,self::$_publicEndPoints)){
         throw new \Exception(self::$_authErrors['noToken']);
-      }elseif(!in_array($this->endpoint,self::$_publicEndPoints) && !$this->_verifyToken() && !isset($this->headers['request_token'])){
+      }elseif(isset($this->headers['auth_token']) && !$this->_verifyToken()){
         throw new \Exception(self::$_authErrors['badToken']);
       }
       return $this;
