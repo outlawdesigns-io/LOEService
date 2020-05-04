@@ -183,6 +183,9 @@ class EndPoint extends API{
       }elseif(isset($this->verb)){
         $secret = \LOE\Share::getSecret($this->verb);
         $data = \LOE\Share::decodeToken($this->verb,$secret);
+        if(strtotime($data->expiration_date) < strtotime(date("Y-m-d H:i:s"))){
+          throw new \Exception('Token Expired');
+        }
       }
       return $data;
     }
