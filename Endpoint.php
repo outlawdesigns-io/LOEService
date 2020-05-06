@@ -299,7 +299,8 @@ class EndPoint extends API{
       $data = null;
       $objName = ucwords($this->endpoint) . 'Rating';
       if(!isset($this->args[0])){
-        $data = $objName::getAll($this->user->UID);
+        $obj = \LOE\Factory::createModel($objName);
+        $data = $obj::getAll($this->user->UID);
       }else{
         $data = \LOE\Factory::createModel($objName,$this->args[0]);
       }
@@ -342,7 +343,8 @@ class EndPoint extends API{
       $data = null;
       $objName = ucwords($this->endpoint) . 'PlayList';
       if(!isset($this->args[0])){
-        $data = $objName::getAll($this->user->UID);
+        $obj = \LOE\Factory::createModel($objName);
+        $data = $obj::getAll($this->user->UID);
       }else{
         $data = \LOE\Factory::createModel($objName,$this->args[0]);
       }
