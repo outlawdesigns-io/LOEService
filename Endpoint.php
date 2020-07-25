@@ -156,7 +156,7 @@ class EndPoint extends API{
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
             $processor = \LOE\Factory::createHoldingBayProcessor($this->endpoint,$this->request);
-            $data = $processor->doc;
+            $data = $processor->anime;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
             $data = \LOE\Anime\Anime::getAll();
         }elseif(!isset($this->verb) && (int)$this->args[0] && $this->method == 'GET'){
@@ -168,6 +168,23 @@ class EndPoint extends API{
             $data = $this->_parseVerb();
         }else{
             throw new \Exception(self::REQERR);
+        }
+        return $data;
+    }
+    protected function comic(){
+        $data = null;
+        if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
+          $processor = \LOE\Factory::createHoldingBayProcessor($this->endpoint,$this->request);
+          $data = $processor->comic
+        }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
+          $data = \LOE\Comic\Comic::getAll();
+        }elseif((int)$this->args[0] && $this->method == 'PUT'){
+          $data = \LOE\Factory::createModel($this->endpoint,$this->args[0]);
+          $data->setFields($this->request)->update();
+        }elseif(isset($this->verb)){
+          $data = $this->_parseVerb();
+        }else{
+          throw new \Exception(self::REQERR);
         }
         return $data;
     }
