@@ -175,7 +175,7 @@ class EndPoint extends API{
         $data = null;
         if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
           $processor = \LOE\Factory::createHoldingBayProcessor($this->endpoint,$this->request);
-          $data = $processor->comic
+          $data = $processor->comic;
         }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
           $data = \LOE\Comic\Comic::getAll();
         }elseif((int)$this->args[0] && $this->method == 'PUT'){
