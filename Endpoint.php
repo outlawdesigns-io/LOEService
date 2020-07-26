@@ -239,6 +239,7 @@ class EndPoint extends API{
             case 'comic':
                 $scanner = \LOE\Factory::createHoldingBayScanner(\LOE\Factory::getModel('Comic'));
                 $data = $scanner->targetModels;
+                break;
             case 'anime':
                 break;
             case 'docs':
