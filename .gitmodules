@@ -10,3 +10,6 @@
 [submodule "Libs/cronClientSetup"]
 	path = Libs/cronClientSetup
 	url = https://gist.github.com/outlawstar4761/1b2c86ab67ef92c2926b8da31a415e45
+[submodule "Libs/SSLConf"]
+	path = Libs/SSLConf
+	url = https://gist.github.com/outlawstar4761/f542d92168f78640fbb28f26ead562c3
