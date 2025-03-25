@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  backend:
+    image: loeservice-php8.2
+    environment:
+      ALLOW_OVERRIDE: true
+      MYSQL_HOST: $DOCKER_MYSQL_HOST
+      MYSQL_USER: $DOCKER_MYSQL_USER
+      MYSQL_PASSWORD: $DOCKER_MYSQL_PASS
+      CRON_USER: $OD_ACCOUNT_USER
+      CRON_PASS: $OD_ACCOUNT_PASS
+      OD_ACCOUNT_USER: $OD_ACCOUNT_USER
+      OD_ACCOUNT_PASS: $OD_ACCOUNT_PASS
+      IMDB_API_KEY: $IMDB_API_KEY
+      COMICVINE_API_KEY: $COMICVINE_API_KEY
+    build:
+      context: $DOCKER_BUILD_DIR/LOEService/
+      dockerfile: $DOCKER_BUILD_DIR/LOEService/Dockerfile
+    ports:
+      - '9669:443'
+    volumes:
+      - $DOCKER_CERT_DIR:/etc/apache2/certs
+      - $DOCKER_SHARED_LOG_DIR:/mnt/LOE/log
