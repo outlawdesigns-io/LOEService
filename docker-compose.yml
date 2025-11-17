@@ -8,17 +8,18 @@ services:
       MYSQL_HOST: $DOCKER_MYSQL_HOST
       MYSQL_USER: $DOCKER_MYSQL_USER
       MYSQL_PASSWORD: $DOCKER_MYSQL_PASS
-      CRON_USER: $OD_ACCOUNT_USER
-      CRON_PASS: $OD_ACCOUNT_PASS
-      OD_ACCOUNT_USER: $OD_ACCOUNT_USER
-      OD_ACCOUNT_PASS: $OD_ACCOUNT_PASS
+      OAUTH_JWKS_URI: $DOCKER_OAUTH_JWKS_URI
+      OAUTH_CACHE_PATH: $DOCKER_OAUTH_CACHE_PATH
+      OATH_CACHE_TTL: $DOCKER_OATH_CACHE_TTL
+      OATH_AUDIENCE: $DOCKER_OATH_AUDIENCE
       IMDB_API_KEY: $IMDB_API_KEY
       COMICVINE_API_KEY: $COMICVINE_API_KEY
     build:
-      context: $DOCKER_BUILD_DIR/LOEService/
-      dockerfile: $DOCKER_BUILD_DIR/LOEService/Dockerfile
+      context: ./
+      dockerfile: ./Dockerfile
     ports:
-      - '9669:443'
+      - '9669:80'
     volumes:
-      - $DOCKER_CERT_DIR:/etc/apache2/certs
-      - $DOCKER_SHARED_LOG_DIR:/mnt/LOE/log
+      #use these to redirect access logs away from stdout
+      - ./apache-logs.conf:/etc/apache2/conf-enabled/custom-logs.conf
+      - /tmp/loe-api-logs/:/var/log/apache2
