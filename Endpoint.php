@@ -31,7 +31,9 @@ class EndPoint extends API{
     public function __construct($request,$origin)
     {
       parent::__construct($request);
-      if(isset($this->headers['Authorization'])){
+      $this->_loadEnvSettings();
+      $this->_tokenValidator = new JwksTokenValidator($this->_jwksUri, $this->_cacheFile, $this->_cacheTtl);
+      if(!isset($this->headers['Authorization'])){
         throw new \Exception(self::$_authErrors['noToken']);
       }
       $token = explode(' ',$this->headers['Authorization'])[1] ?? null;
@@ -42,8 +44,6 @@ class EndPoint extends API{
       if(!$this->_verifyToken()){
         throw new \Exception(self::$_authErrors['badToken']);
       }
-      $this->_loadEnvSettings();
-      $this->_tokenValidator = new JwksTokenValidator($this->_jwksUri, $this->_cacheFile, $this->_cacheTtl);
     }
     private function _loadEnvSettings(){
       if(!$this->_jwksUri = getenv('OAUTH_JWKS_URI')){
