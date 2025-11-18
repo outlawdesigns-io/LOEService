@@ -68,7 +68,7 @@ class EndPoint extends API{
       if(!in_array($this->_oauthAudience,$payload['aud'])){
         return false;
       }
-      $this->_user = $payload;
+      $this->user = $payload;
       return true;
     }
     protected function example(){
@@ -198,7 +198,7 @@ class EndPoint extends API{
     protected function share(){
       $data = null;
       if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-        $data = \LOE\Factory::createShare($this->user->UID,$this->request->modelId,$this->request->objectId);
+        $data = \LOE\Factory::createShare($this->user['sub'],$this->request->modelId,$this->request->objectId);
         $data->create();
       }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
         $data = \LOE\Share::getAll();
@@ -319,7 +319,7 @@ class EndPoint extends API{
       $obj = \LOE\Factory::createModel($key . 'Rating');
       $idKey = strtolower($this->endpoint) . 'Id';
       $obj->$idKey = $this->args[0];
-      $obj->userId = $this->user->UID;
+      $obj->userId = $this->user['sub'];
       $obj->setFields($this->request)->create();
       return $obj;
     }
@@ -328,7 +328,7 @@ class EndPoint extends API{
       $objName = ucwords($this->endpoint) . 'Rating';
       if(!isset($this->args[0])){
         $obj = \LOE\Factory::createModel($objName);
-        $data = $obj::getAll($this->user->UID);
+        $data = $obj::getAll($this->user['sub']);
       }else{
         $data = \LOE\Factory::createModel($objName,$this->args[0]);
       }
@@ -354,7 +354,7 @@ class EndPoint extends API{
     private function _savePlayList(){
       $key = ucwords($this->endpoint);
       $obj = \LOE\Factory::createModel($key . 'PlayList');
-      $obj->UserId = $this->user->UID;
+      $obj->UserId = $this->user['sub'];
       if(empty($this->request->Label) || is_null($this->request->Label) || !isset($this->request->Label)){
         $this->request->Label = $this->_getRandomWord() . "_" . $this->_getRandomWord();
       }
@@ -372,7 +372,7 @@ class EndPoint extends API{
       $objName = ucwords($this->endpoint) . 'PlayList';
       if(!isset($this->args[0])){
         $obj = \LOE\Factory::createModel($objName);
-        $data = $obj::getAll($this->user->UID);
+        $data = $obj::getAll($this->user['sub']);
       }else{
         $data = \LOE\Factory::createModel($objName,$this->args[0]);
       }
