@@ -1,11 +1,11 @@
 <?php
 
 require_once __DIR__ . '/Libs/Api/Api.php';
+require_once __DIR__ . '/Libs/JwksTokenValidator-PHP/JwksTokenValidator.php';
 require_once __DIR__ . '/Libs/LOEServer/Factory.php';
 
 class EndPoint extends API{
 
-    const ACCOUNTS = 'https://api.outlawdesigns.io:9661/';
     const RANDWORDS = 'https://api.outlawdesigns.io:9600/';
     const GETERR = 'Can only GET this endpoint';
     const POSTERR = 'Can only POST this endpoint';
@@ -15,54 +15,61 @@ class EndPoint extends API{
       "share"
     );
     protected static $_authErrors = array(
-      "headers"=>"Missing required headers.",
+      "headers"=>"Malfromed Authorization header.",
       "noToken"=>"Access Denied. No Token Present.",
       "badToken"=>"Access Denied. Invalid Token.",
       "badMethod"=>"Unsupported Request Method"
     );
+    protected $_tokenValidator;
+    protected $_jwksUri;
+    protected $_cacheFile;
+    protected $_cacheTtl;
+    protected $_oauthAudience;
+    protected $_token;
+    protected $_user;
 
     public function __construct($request,$origin)
     {
-        parent::__construct($request);
-        $this->_verifyHeaders();
-    }
-    private function _verifyHeaders(){
-      if(isset($this->headers['request_token']) && !isset($this->headers['password'])){
-        throw new \Exception(self::$_authErrors['headers']);
-      }elseif(!isset($this->headers['request_token']) && !isset($this->headers['auth_token']) && !in_array($this->endpoint,self::$_publicEndPoints)){
+      parent::__construct($request);
+      $this->_loadEnvSettings();
+      $this->_tokenValidator = new JwksTokenValidator($this->_jwksUri, $this->_cacheFile, $this->_cacheTtl);
+      if(!isset($this->headers['Authorization'])){
         throw new \Exception(self::$_authErrors['noToken']);
-      }elseif(isset($this->headers['auth_token']) && !$this->_verifyToken()){
+      }
+      $token = explode(' ',$this->headers['Authorization'])[1] ?? null;
+      if(!$token){
+        throw new \Exception(self::$_authErrors['headers']);
+      }
+      $this->_token = $token;
+      if(!$this->_verifyToken()){
         throw new \Exception(self::$_authErrors['badToken']);
       }
-      return $this;
+    }
+    private function _loadEnvSettings(){
+      if(!$this->_jwksUri = getenv('OAUTH_JWKS_URI')){
+        throw new \Exception('Unable to access environment variable: OAUTH_JWKS_URI');
+      }
+      if(!$this->_cacheFile = getenv('OAUTH_CACHE_PATH')){
+        throw new \Exception('Unable to access environment variable: OAUTH_CACHE_PATH');
+      }
+      if(!$this->_cacheTtl = getenv('OATH_CACHE_TTL')){
+        throw new \Exception('Unable to access environment variable: OATH_CACHE_TTL');
+      }
+      if(!$this->_oauthAudience = getenv('OATH_AUDIENCE')){
+        throw new \Exception('Unable to access environment variable: OATH_AUDIENCE');
+      }
     }
     private function _verifyToken(){
-      $ch = curl_init();
-      curl_setopt($ch,CURLOPT_URL,self::ACCOUNTS . "verify/");
-      curl_setopt($ch,CURLOPT_HTTPHEADER,array('auth_token: ' . $this->headers['auth_token']));
-      curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-      $output = json_decode(curl_exec($ch));
-      curl_close($ch);
-      if(isset($output->error)){
+      try{
+        $payload = $this->_tokenValidator->validateJwt($this->_token);
+      }catch(\Exception $ex){
         return false;
       }
-      $this->user = $output;
-      return true;
-    }
-    private function _authenticate(){
-      $headers = array('request_token: ' . $this->headers['request_token'],'password: ' . $this->headers['password']);
-      $ch = curl_init();
-      curl_setopt($ch,CURLOPT_URL,self::ACCOUNTS . "authenticate/");
-      curl_setopt($ch,CURLOPT_HTTPHEADER,$headers);
-      curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-      $output = json_decode(curl_exec($ch));
-      curl_close($ch);
-      if(isset($output->error)){
-        throw new \Exception($output->error);
+      if(!in_array($this->_oauthAudience,$payload['aud'])){
+        return false;
       }
-      $this->headers['auth_token'] = $output->token;
-      $this->_verifyToken();
-      return $output;
+      $this->user = $payload;
+      return true;
     }
     protected function example(){
         return array("endPoint"=>$this->endpoint,"verb"=>$this->verb,"args"=>$this->args,"request"=>$this->request);
@@ -191,7 +198,7 @@ class EndPoint extends API{
     protected function share(){
       $data = null;
       if(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'POST'){
-        $data = \LOE\Factory::createShare($this->user->UID,$this->request->modelId,$this->request->objectId);
+        $data = \LOE\Factory::createShare($this->user['sub'],$this->request->modelId,$this->request->objectId);
         $data->create();
       }elseif(!isset($this->verb) && !isset($this->args[0]) && $this->method == 'GET'){
         $data = \LOE\Share::getAll();
@@ -312,7 +319,7 @@ class EndPoint extends API{
       $obj = \LOE\Factory::createModel($key . 'Rating');
       $idKey = strtolower($this->endpoint) . 'Id';
       $obj->$idKey = $this->args[0];
-      $obj->userId = $this->user->UID;
+      $obj->userId = $this->user['sub'];
       $obj->setFields($this->request)->create();
       return $obj;
     }
@@ -321,7 +328,7 @@ class EndPoint extends API{
       $objName = ucwords($this->endpoint) . 'Rating';
       if(!isset($this->args[0])){
         $obj = \LOE\Factory::createModel($objName);
-        $data = $obj::getAll($this->user->UID);
+        $data = $obj::getAll($this->user['sub']);
       }else{
         $data = \LOE\Factory::createModel($objName,$this->args[0]);
       }
@@ -347,7 +354,7 @@ class EndPoint extends API{
     private function _savePlayList(){
       $key = ucwords($this->endpoint);
       $obj = \LOE\Factory::createModel($key . 'PlayList');
-      $obj->UserId = $this->user->UID;
+      $obj->UserId = $this->user['sub'];
       if(empty($this->request->Label) || is_null($this->request->Label) || !isset($this->request->Label)){
         $this->request->Label = $this->_getRandomWord() . "_" . $this->_getRandomWord();
       }
@@ -365,7 +372,7 @@ class EndPoint extends API{
       $objName = ucwords($this->endpoint) . 'PlayList';
       if(!isset($this->args[0])){
         $obj = \LOE\Factory::createModel($objName);
-        $data = $obj::getAll($this->user->UID);
+        $data = $obj::getAll($this->user['sub']);
       }else{
         $data = \LOE\Factory::createModel($objName,$this->args[0]);
       }
